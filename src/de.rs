@@ -11,6 +11,7 @@ pub use any_value::{
 pub use data_frame::{
     BorrowedDeserializer as BorrowedDataFrameDeserializer, Deserializer as DataFrameDeserializer,
 };
+use polars_core::datatypes::AnyValue;
 use serde::de;
 use std::fmt;
 #[cfg(feature = "dtype-categorical")]
@@ -26,6 +27,8 @@ pub enum Error {
         polars_core::datatypes::CatSize,
         Arc<polars_core::datatypes::CategoricalMapping>,
     ),
+    #[error("unknown data type")]
+    UnknownDataType(AnyValue<'static>),
     #[error("{0}")]
     Custom(String),
 }

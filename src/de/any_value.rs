@@ -53,6 +53,8 @@ macro_rules! deserialize_any {
                 AnyValue::StringOwned(v) => visitor.visit_string(v.into_string()),
                 AnyValue::Binary(v) => visitor.$visit_bytes(v),
                 AnyValue::BinaryOwned(v) => visitor.visit_byte_buf(v),
+                #[allow(unreachable_patterns)]
+                _ => Err(super::Error::Unknown(self.0.into_static())),
             }
         }
     };
