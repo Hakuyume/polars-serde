@@ -1,0 +1,14 @@
+[package]
+name = "polars-serde"
+version = "0.1.0"
+edition = "2024"
+
+[features]
+dtype-array = ["polars-core/dtype-array"]
+dtype-categorical = ["polars-core/dtype-categorical"]
+rows = ["polars-core/rows"]
+
+[dependencies]
+polars-core = { version = "0.51.0", default-features = false }
+serde = "1.0.228"
+thiserror = "2.0.17"
