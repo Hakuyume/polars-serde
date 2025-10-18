@@ -128,3 +128,39 @@ impl<'de> de::IntoDeserializer<'de, super::Error> for BorrowedDeserializer<'de> 
         self
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use polars_core::frame::DataFrame;
+    use polars_core::frame::column::Column;
+    use serde::Deserialize;
+
+    #[test]
+    fn test() {
+        #[derive(Debug, PartialEq, Deserialize)]
+        struct Row<'a> {
+            #[serde(rename = "Ocean")]
+            ocean: &'a str,
+            #[serde(rename = "Area (km²)")]
+            area: u64,
+        }
+
+        let s1 = Column::new("Ocean".into(), ["Atlantic", "Indian"]);
+        let s2 = Column::new("Area (km²)".into(), [106_460_000, 70_560_000]);
+        let df = DataFrame::new(vec![s1, s2]).unwrap();
+
+        assert_eq!(
+            Vec::<Row<'_>>::deserialize(super::BorrowedDeserializer(&df)).unwrap(),
+            [
+                Row {
+                    ocean: "Atlantic",
+                    area: 106_460_000,
+                },
+                Row {
+                    ocean: "Indian",
+                    area: 70_560_000,
+                },
+            ],
+        )
+    }
+}

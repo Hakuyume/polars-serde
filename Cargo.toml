@@ -12,3 +12,6 @@ rows = ["polars-core/rows"]
 polars-core = { version = "0.51.0", default-features = false }
 serde = "1.0.228"
 thiserror = "2.0.17"
+
+[dev-dependencies]
+serde = { version = "1.0.228", features = ["derive"] }
