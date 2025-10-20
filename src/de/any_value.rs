@@ -43,13 +43,13 @@ macro_rules! deserialize_any {
                         Err(super::Error::InvalidCategoricalId(cat, categorical_mapping))
                     }
                 }
-                AnyValue::List(v) => {
-                    visitor.visit_seq(de::value::SeqDeserializer::new(v.iter().map(Deserializer)))
-                }
+                AnyValue::List(v) => visitor.visit_seq(de::value::SeqDeserializer::new(
+                    v.iter().map(Deserializer::new),
+                )),
                 #[cfg(feature = "dtype-array")]
-                AnyValue::Array(v, _) => {
-                    visitor.visit_seq(de::value::SeqDeserializer::new(v.iter().map(Deserializer)))
-                }
+                AnyValue::Array(v, _) => visitor.visit_seq(de::value::SeqDeserializer::new(
+                    v.iter().map(Deserializer::new),
+                )),
                 AnyValue::StringOwned(v) => visitor.visit_string(v.into_string()),
                 AnyValue::Binary(v) => visitor.$visit_bytes(v),
                 AnyValue::BinaryOwned(v) => visitor.visit_byte_buf(v),
@@ -60,7 +60,13 @@ macro_rules! deserialize_any {
     };
 }
 
-pub struct Deserializer<'a>(pub AnyValue<'a>);
+pub struct Deserializer<'a>(AnyValue<'a>);
+
+impl<'a> Deserializer<'a> {
+    pub fn new(value: AnyValue<'a>) -> Self {
+        Self(value)
+    }
+}
 
 impl<'de, 'a> de::Deserializer<'de> for Deserializer<'a> {
     type Error = super::Error;
@@ -77,6 +83,12 @@ impl<'de, 'a> de::IntoDeserializer<'de, super::Error> for Deserializer<'a> {
 }
 
 pub struct BorrowedDeserializer<'de>(pub AnyValue<'de>);
+
+impl<'de> BorrowedDeserializer<'de> {
+    pub fn new(value: AnyValue<'de>) -> Self {
+        Self(value)
+    }
+}
 
 impl<'de> de::Deserializer<'de> for BorrowedDeserializer<'de> {
     type Error = super::Error;

@@ -4,7 +4,13 @@ use polars_core::frame::column::Column;
 use polars_core::frame::row::Row;
 use serde::de;
 
-pub struct Deserializer<'a>(pub &'a DataFrame);
+pub struct Deserializer<'a>(&'a DataFrame);
+
+impl<'a> Deserializer<'a> {
+    pub fn new(value: &'a DataFrame) -> Self {
+        Self(value)
+    }
+}
 
 impl<'de, 'a> de::Deserializer<'de> for Deserializer<'a> {
     type Error = super::Error;
@@ -30,7 +36,7 @@ impl<'de, 'a> de::Deserializer<'de> for Deserializer<'a> {
                     |(k, v)| {
                         (
                             de::value::StrDeserializer::new(k.name()),
-                            super::AnyValueDeserializer(v),
+                            super::AnyValueDeserializer::new(v),
                         )
                     },
                 )))
@@ -66,7 +72,13 @@ impl<'de, 'a> de::IntoDeserializer<'de, super::Error> for Deserializer<'a> {
     }
 }
 
-pub struct BorrowedDeserializer<'de>(pub &'de DataFrame);
+pub struct BorrowedDeserializer<'de>(&'de DataFrame);
+
+impl<'de> BorrowedDeserializer<'de> {
+    pub fn new(value: &'de DataFrame) -> Self {
+        Self(value)
+    }
+}
 
 impl<'de> de::Deserializer<'de> for BorrowedDeserializer<'de> {
     type Error = super::Error;
@@ -92,7 +104,7 @@ impl<'de> de::Deserializer<'de> for BorrowedDeserializer<'de> {
                     |(k, v)| {
                         (
                             de::value::BorrowedStrDeserializer::new(k.name()),
-                            super::BorrowedAnyValueDeserializer(v),
+                            super::BorrowedAnyValueDeserializer::new(v),
                         )
                     },
                 )))
@@ -149,8 +161,9 @@ mod tests {
         let s2 = Column::new("Area (km²)".into(), [106_460_000, 70_560_000]);
         let df = DataFrame::new(vec![s1, s2]).unwrap();
 
+        let rows = Vec::<Row<'_>>::deserialize(super::BorrowedDeserializer::new(&df)).unwrap();
         assert_eq!(
-            Vec::<Row<'_>>::deserialize(super::BorrowedDeserializer(&df)).unwrap(),
+            rows,
             [
                 Row {
                     ocean: "Atlantic",
