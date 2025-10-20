@@ -1,7 +1,6 @@
 #[macro_use]
 mod macros;
 mod any_value;
-#[cfg(feature = "rows")]
 mod data_frame;
 #[cfg(feature = "rows")]
 mod row;
@@ -9,7 +8,6 @@ mod row;
 pub use any_value::{
     BorrowedDeserializer as BorrowedAnyValueDeserializer, Deserializer as AnyValueDeserializer,
 };
-#[cfg(feature = "rows")]
 pub use data_frame::{
     BorrowedDeserializer as BorrowedDataFrameDeserializer, Deserializer as DataFrameDeserializer,
 };
