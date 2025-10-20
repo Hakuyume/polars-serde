@@ -3,6 +3,13 @@ name = "polars-serde"
 version = "0.1.0"
 edition = "2024"
 
+description = "deserialize from polars"
+license = "MIT"
+repository = "https://github.com/Hakuyume/polars-serde"
+
+[package.metadata.docs.rs]
+all-features = true
+
 [features]
 dtype-array = ["polars-core/dtype-array"]
 dtype-categorical = ["polars-core/dtype-categorical"]
