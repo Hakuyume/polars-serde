@@ -223,4 +223,47 @@ mod tests {
             ],
         );
     }
+
+    #[cfg(feature = "rows")]
+    #[test]
+    fn test_list() {
+        use polars_core::prelude::*;
+        #[derive(Debug, PartialEq, Deserialize)]
+        struct Row<'a> {
+            name: &'a str,
+            scores: Vec<f64>,
+        }
+
+        let values = Series::new(
+            "scores".into(),
+            &[
+                Series::new("".into(), &[1.0_f64, 2.5, 3.0]),
+                Series::new("".into(), &[13.5_f64, 42.0]),
+            ],
+        );
+
+        let df = DataFrame::new(
+            2,
+            vec![
+                Column::Series(values.into()),
+                Column::Series(Series::new("name".into(), &["alice", "bob"]).into()),
+            ],
+        )
+        .unwrap();
+
+        let rows = Vec::<Row>::deserialize(super::BorrowedDeserializer::rows(&df)).unwrap();
+        assert_eq!(
+            rows,
+            [
+                Row {
+                    scores: vec![1.0, 2.5, 3.0],
+                    name: "alice",
+                },
+                Row {
+                    scores: vec![13.5, 42.0],
+                    name: "bob",
+                },
+            ],
+        );
+    }
 }
