@@ -82,7 +82,7 @@ impl<'de, 'a> de::IntoDeserializer<'de, super::Error> for Deserializer<'a> {
     }
 }
 
-pub struct BorrowedDeserializer<'de>(pub AnyValue<'de>);
+pub struct BorrowedDeserializer<'de>(AnyValue<'de>);
 
 impl<'de> BorrowedDeserializer<'de> {
     pub fn new(value: AnyValue<'de>) -> Self {

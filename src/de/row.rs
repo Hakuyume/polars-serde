@@ -65,7 +65,7 @@ where
             self.0.into_iter().zip(self.1.0).map(|(k, v)| {
                 (
                     de::value::BorrowedStrDeserializer::new(k),
-                    super::BorrowedAnyValueDeserializer(v),
+                    super::BorrowedAnyValueDeserializer::new(v),
                 )
             }),
         ))
