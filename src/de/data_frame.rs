@@ -23,7 +23,7 @@ impl<'de, 'a> de::Deserializer<'de> for Deserializer<'a> {
     {
         match self.1 {
             Order::Column => visitor.visit_map(de::value::MapDeserializer::new(
-                self.0.column_iter().map(|column| {
+                self.0.columns().iter().map(|column| {
                     (
                         de::value::StrDeserializer::new(column.name()),
                         de::value::SeqDeserializer::new(
@@ -40,7 +40,7 @@ impl<'de, 'a> de::Deserializer<'de> for Deserializer<'a> {
                             .get_row(i)
                             .map(|row| {
                                 super::RowDeserializer::new(
-                                    self.0.column_iter().map(|column| column.name().as_str()),
+                                    self.0.columns().iter().map(|column| column.name().as_str()),
                                     row,
                                 )
                             })
@@ -84,7 +84,7 @@ impl<'de> de::Deserializer<'de> for BorrowedDeserializer<'de> {
     {
         match self.1 {
             Order::Column => visitor.visit_map(de::value::MapDeserializer::new(
-                self.0.column_iter().map(|column| {
+                self.0.columns().iter().map(|column| {
                     (
                         de::value::BorrowedStrDeserializer::new(column.name()),
                         de::value::SeqDeserializer::new(
@@ -103,7 +103,7 @@ impl<'de> de::Deserializer<'de> for BorrowedDeserializer<'de> {
                             .get_row(i)
                             .map(|row| {
                                 super::BorrowedRowDeserializer::new(
-                                    self.0.column_iter().map(|column| column.name().as_str()),
+                                    self.0.columns().iter().map(|column| column.name().as_str()),
                                     row,
                                 )
                             })
@@ -181,7 +181,7 @@ mod tests {
 
         let s1 = Column::new("Ocean".into(), ["Atlantic", "Indian"]);
         let s2 = Column::new("Area (km²)".into(), [106_460_000, 70_560_000]);
-        let df = DataFrame::new(vec![s1, s2]).unwrap();
+        let df = DataFrame::new(2, vec![s1, s2]).unwrap();
 
         let columns = Columns::deserialize(super::BorrowedDeserializer::columns(&df)).unwrap();
         assert_eq!(
@@ -206,7 +206,7 @@ mod tests {
 
         let s1 = Column::new("Ocean".into(), ["Atlantic", "Indian"]);
         let s2 = Column::new("Area (km²)".into(), [106_460_000, 70_560_000]);
-        let df = DataFrame::new(vec![s1, s2]).unwrap();
+        let df = DataFrame::new(2, vec![s1, s2]).unwrap();
 
         let rows = Vec::<Row<'_>>::deserialize(super::BorrowedDeserializer::rows(&df)).unwrap();
         assert_eq!(
