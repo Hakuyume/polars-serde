@@ -16,9 +16,9 @@ dtype-categorical = ["polars-core/dtype-categorical"]
 rows = ["polars-core/rows"]
 
 [dependencies]
-polars-core = { version = "0.51.0", default-features = false }
+polars-core = { version = "0.54.4", default-features = false }
 serde = "1.0.228"
-thiserror = "2.0.17"
+thiserror = "2.0.18"
 
 [dev-dependencies]
 serde = { version = "1.0.228", features = ["derive"] }
