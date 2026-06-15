@@ -83,7 +83,20 @@ impl<'a> Deserializer<'a> {
 
 impl<'de, 'a> de::Deserializer<'de> for Deserializer<'a> {
     type Error = super::Error;
+
     deserialize_any!(visit_str, visit_bytes);
+
+    fn deserialize_option<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: de::Visitor<'de>,
+    {
+        if self.0 == AnyValue::Null {
+            visitor.visit_none()
+        } else {
+            visitor.visit_some(self)
+        }
+    }
+
     deserialize_delegate!();
 }
 
@@ -105,7 +118,20 @@ impl<'de> BorrowedDeserializer<'de> {
 
 impl<'de> de::Deserializer<'de> for BorrowedDeserializer<'de> {
     type Error = super::Error;
+
     deserialize_any!(visit_borrowed_str, visit_borrowed_bytes);
+
+    fn deserialize_option<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: de::Visitor<'de>,
+    {
+        if self.0 == AnyValue::Null {
+            visitor.visit_none()
+        } else {
+            visitor.visit_some(self)
+        }
+    }
+
     deserialize_delegate!();
 }
 

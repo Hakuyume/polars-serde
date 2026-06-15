@@ -112,13 +112,6 @@ macro_rules! deserialize_delegate {
             self.deserialize_any(visitor)
         }
 
-        fn deserialize_option<V>(self, visitor: V) -> Result<V::Value, Self::Error>
-        where
-            V: de::Visitor<'de>,
-        {
-            self.deserialize_any(visitor)
-        }
-
         fn deserialize_unit<V>(self, visitor: V) -> Result<V::Value, Self::Error>
         where
             V: de::Visitor<'de>,

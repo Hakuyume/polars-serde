@@ -29,6 +29,13 @@ where
         ))
     }
 
+    fn deserialize_option<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: de::Visitor<'de>,
+    {
+        self.deserialize_any(visitor)
+    }
+
     deserialize_delegate!();
 }
 
@@ -69,6 +76,13 @@ where
                 )
             }),
         ))
+    }
+
+    fn deserialize_option<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: de::Visitor<'de>,
+    {
+        self.deserialize_any(visitor)
     }
 
     deserialize_delegate!();

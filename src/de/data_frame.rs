@@ -51,6 +51,13 @@ impl<'de, 'a> de::Deserializer<'de> for Deserializer<'a> {
         }
     }
 
+    fn deserialize_option<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: de::Visitor<'de>,
+    {
+        self.deserialize_any(visitor)
+    }
+
     deserialize_delegate!();
 }
 
@@ -114,6 +121,13 @@ impl<'de> de::Deserializer<'de> for BorrowedDeserializer<'de> {
         }
     }
 
+    fn deserialize_option<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: de::Visitor<'de>,
+    {
+        self.deserialize_any(visitor)
+    }
+
     deserialize_delegate!();
 }
 
@@ -146,6 +160,13 @@ where
         V: de::Visitor<'de>,
     {
         self.0?.deserialize_any(visitor)
+    }
+
+    fn deserialize_option<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: de::Visitor<'de>,
+    {
+        self.deserialize_any(visitor)
     }
 
     deserialize_delegate!();
