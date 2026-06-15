@@ -7,7 +7,7 @@
 //!
 //! let s1 = Column::new("Ocean".into(), ["Atlantic", "Indian"]);
 //! let s2 = Column::new("Area (km²)".into(), [106_460_000, 70_560_000]);
-//! let df = DataFrame::new(vec![s1, s2])?;
+//! let df = DataFrame::new_infer_height(vec![s1, s2])?;
 //!
 //! #[derive(Debug, PartialEq, Deserialize)]
 //! struct Columns<'a> {
