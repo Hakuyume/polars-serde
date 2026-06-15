@@ -15,6 +15,7 @@ macro_rules! deserialize_any {
                 AnyValue::UInt16(v) => visitor.visit_u16(v),
                 AnyValue::UInt32(v) => visitor.visit_u32(v),
                 AnyValue::UInt64(v) => visitor.visit_u64(v),
+                AnyValue::UInt128(v) => visitor.visit_u128(v),
                 AnyValue::Int8(v) => visitor.visit_i8(v),
                 AnyValue::Int16(v) => visitor.visit_i16(v),
                 AnyValue::Int32(v) => visitor.visit_i32(v),
