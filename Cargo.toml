@@ -13,6 +13,7 @@ all-features = true
 [features]
 dtype-array = ["polars-core/dtype-array"]
 dtype-categorical = ["polars-core/dtype-categorical"]
+dtype-struct = ["polars-core/dtype-struct"]
 rows = ["polars-core/rows"]
 
 [dependencies]

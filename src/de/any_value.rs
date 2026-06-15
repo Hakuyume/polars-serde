@@ -51,6 +51,18 @@ macro_rules! deserialize_any {
                 AnyValue::Array(v, _) => visitor.visit_seq(de::value::SeqDeserializer::new(
                     v.iter().map(Deserializer::new),
                 )),
+                #[cfg(feature = "dtype-struct")]
+                AnyValue::Struct(_, _, _) => {
+                    // use `into_static` since extracting borrowed values from a `StructArray` is too complicated.
+                    // https://github.com/pola-rs/polars/blob/0d720b3a475ade851e451dbb26bf11310014dd0e/crates/polars-core/src/datatypes/any_value.rs#L1477-L1494
+                    Self::new(self.0.into_static()).deserialize_any(visitor)
+                }
+                #[cfg(feature = "dtype-struct")]
+                AnyValue::StructOwned(v) => visitor.visit_map(de::value::MapDeserializer::new(
+                    v.1.into_iter()
+                        .map(|field| de::value::StringDeserializer::new(field.name.into_string()))
+                        .zip(v.0.into_iter().map(Self::new)),
+                )),
                 AnyValue::StringOwned(v) => visitor.visit_string(v.into_string()),
                 AnyValue::Binary(v) => visitor.$visit_bytes(v),
                 AnyValue::BinaryOwned(v) => visitor.visit_byte_buf(v),
